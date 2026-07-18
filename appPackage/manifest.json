@@ -1,0 +1,45 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.16",
+  "version": "0.1.0",
+  "id": "<<BOT_ID>>",
+  "packageName": "com.example.teamstojira",
+  "developer": {
+    "name": "Internal Tools",
+    "websiteUrl": "https://<<BOT_DOMAIN>>",
+    "privacyUrl": "https://<<BOT_DOMAIN>>/health",
+    "termsOfUseUrl": "https://<<BOT_DOMAIN>>/health"
+  },
+  "name": { "short": "Jira Ticket", "full": "Create Jira ticket from message" },
+  "description": {
+    "short": "Create a prefilled Jira ticket from any message",
+    "full": "Right-click a message and open a prefilled Jira Server create screen in your browser. No credentials stored; uses your existing Jira browser session."
+  },
+  "icons": { "color": "color.png", "outline": "outline.png" },
+  "accentColor": "#0052CC",
+  "bots": [
+    {
+      "botId": "<<BOT_ID>>",
+      "scopes": ["personal", "team", "groupChat"],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "composeExtensions": [
+    {
+      "botId": "<<BOT_ID>>",
+      "commands": [
+        {
+          "id": "createJiraTicket",
+          "type": "action",
+          "title": "Create Jira ticket",
+          "description": "Create a prefilled Jira ticket from this message",
+          "context": ["message"],
+          "fetchTask": true
+        }
+      ]
+    }
+  ],
+  "permissions": ["identity"],
+  "validDomains": ["<<BOT_DOMAIN>>"]
+}
