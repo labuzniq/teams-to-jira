@@ -47,4 +47,21 @@ describe('buildCreateIssueUrl', () => {
     const desc = new URL(buildCreateIssueUrl(BASE)).searchParams.get('description');
     expect(desc).toBe('It broke');
   });
+
+  it('truncates an oversized summary so the URL fits MAX_URL_LENGTH', () => {
+    const url = buildCreateIssueUrl({ ...BASE, summary: 'x'.repeat(2100), description: 'short' });
+    expect(url.length).toBeLessThanOrEqual(MAX_URL_LENGTH);
+    const summary = new URL(url).searchParams.get('summary')!;
+    expect(summary.endsWith(TRUNCATION_MARKER)).toBe(true);
+    expect(summary.length).toBeLessThan(2100);
+  });
+
+  it('keeps the URL within MAX_URL_LENGTH when both summary and description are huge', () => {
+    const url = buildCreateIssueUrl({
+      ...BASE,
+      summary: 'y'.repeat(4000),
+      description: 'z'.repeat(4000),
+    });
+    expect(url.length).toBeLessThanOrEqual(MAX_URL_LENGTH);
+  });
 });

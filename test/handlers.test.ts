@@ -43,7 +43,8 @@ describe('onFetchTask', () => {
     const card = cardOf(await onFetchTask(deps, 'u1', PAYLOAD));
     expect(inputById(card, 'summary').value).toBe('Server is down');
     const desc = inputById(card, 'description').value as string;
-    expect(desc.startsWith('Reported by Ann Example in Teams: https://teams.microsoft.com/l/message/19:x/123')).toBe(true);
+    expect(desc.startsWith('https://teams.microsoft.com/l/message/19:x/123')).toBe(true);
+    expect(desc).toContain('Reported by Ann Example in Teams');
     expect(desc).toContain('since 9am');
     expect(inputById(card, 'projectKey').choices.map((c: any) => c.value)).toEqual(['XYZ', 'ABC']);
   });

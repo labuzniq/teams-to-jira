@@ -24,6 +24,10 @@ export interface Deps {
 }
 
 const MAX_SUMMARY = 120;
+// Hard cap on the user-editable summary sent to Jira (Jira's own summary limit
+// is 255). Bounds the summary so it cannot push the create-issue URL over the
+// length limit or force the Teams deep link out of the description.
+const MAX_SUBMIT_SUMMARY = 255;
 
 export function taskContinue(card: object, title = 'Create Jira ticket'): object {
   return {
@@ -50,8 +54,11 @@ function buildPrefill(payload: MessagePayloadLite): { summary: string; descripti
   const summary = firstLine.slice(0, MAX_SUMMARY);
   const author = payload.from?.user?.displayName ?? 'unknown';
   const link = payload.linkToMessage ?? '';
+  // Put the Teams deep link literally FIRST so back-truncation in
+  // buildCreateIssueUrl (which trims from the end) can never drop it, even
+  // when the author's display name is very long.
   const header = link
-    ? `Reported by ${author} in Teams: ${link}`
+    ? `${link}\nReported by ${author} in Teams`
     : `Reported by ${author} in Teams`;
   return { summary, description: `${header}\n\n${text}` };
 }
@@ -150,18 +157,19 @@ async function handleTicketSubmit(
   if (!project) {
     return taskContinue(errorCard(`Unknown project key "${projectKey}". Add it via Jira setup.`));
   }
+  const summary = (data.summary ?? '').slice(0, MAX_SUBMIT_SUMMARY);
   const url = buildCreateIssueUrl({
     baseUrl: prefs.baseUrlOverride ?? deps.defaultBaseUrl,
     pid: project.pid,
     issueTypeId: issueTypeIdFor(project, data.issueTypeName ?? ''),
-    summary: data.summary ?? '',
+    summary,
     description: data.description ?? '',
     priorityId: data.priorityId ? Number(data.priorityId) : undefined,
     assignee: prefs.jiraUsername,
   });
   await deps.store.save(userId, touchRecentProject(prefs, project.key));
   return taskContinue(
-    openInJiraCard({ url, projectKey: project.key, summary: data.summary ?? '' }),
+    openInJiraCard({ url, projectKey: project.key, summary }),
     'Open in Jira'
   );
 }
