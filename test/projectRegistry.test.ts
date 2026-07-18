@@ -34,6 +34,12 @@ describe('parseRegistry', () => {
       parseRegistry(JSON.stringify({ projects: [{ key: 'A', name: 'a', issueTypes: [] }] }))
     ).toThrow(/pid/);
   });
+
+  it('throws on a project with empty issueTypes', () => {
+    expect(() =>
+      parseRegistry(JSON.stringify({ projects: [{ key: 'A', name: 'a', pid: 1, issueTypes: [] }] }))
+    ).toThrow(/issueType/);
+  });
 });
 
 describe('lookups', () => {

@@ -36,7 +36,8 @@ export function parseRegistry(json: string): Registry {
   for (const p of raw.projects) {
     if (!p.key || typeof p.key !== 'string') throw new Error('registry: project missing key');
     if (typeof p.pid !== 'number') throw new Error(`registry: project ${p.key} missing numeric pid`);
-    if (!Array.isArray(p.issueTypes)) throw new Error(`registry: project ${p.key} missing issueTypes`);
+    if (!Array.isArray(p.issueTypes) || p.issueTypes.length === 0)
+      throw new Error(`registry: project ${p.key} must have at least one issueType`);
   }
   return {
     projects: raw.projects as RegistryProject[],
