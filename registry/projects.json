@@ -1,0 +1,14 @@
+{
+  "projects": [
+    {
+      "key": "ABC",
+      "name": "Sample Project",
+      "pid": 10100,
+      "issueTypes": [
+        { "name": "Task", "id": 3 },
+        { "name": "Bug", "id": 1 },
+        { "name": "Story", "id": 7 }
+      ]
+    }
+  ]
+}

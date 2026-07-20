@@ -1,0 +1,7 @@
+node_modules/
+dist/
+appPackage.zip
+appPackage/color.png
+appPackage/outline.png
+.env
+*.log
